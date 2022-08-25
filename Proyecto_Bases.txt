@@ -1,0 +1,916 @@
+//db.agendar.drop();
+//db.centroVacunacion.drop();
+//db.vacunacion.drop();
+//db.vacuna.drop();
+//db.ciudad.drop();
+//db.persona.drop();
+//db.telefono.drop();
+//db.eps.drop();
+
+db.createCollection('ciudad', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['Nombre_Ciudad', 'EPSs'],
+      properties: {
+        Nombre_Ciudad: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+        EPSs: {
+          bsonType: 'array',
+          description: 'must be an array and is required',
+          items: {
+            bsonType: 'object',
+            required: ['Id_EPS'],
+            properties: {
+              Id_EPS: {
+                bsonType: 'objectId',
+                description: 'must be an objectId of the EPS and is required'
+              }
+				    }
+          }
+        }
+      }
+    }
+  }
+});
+
+db.createCollection('eps', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['Nombre_EPS', 'Afiliados', 'Ciudades'],
+      properties: {
+        Nombre_EPS: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+        Afiliados: {
+          bsonType: 'array',
+          description: 'must be an array and is required',
+          items: {
+            bsonType: 'object',
+            required: ['Id_Afiliado'],
+            properties: {
+              Id_Afiliado: {
+                bsonType: 'objectId',
+                description: 'must be an objectId and is required'
+              }
+				    }
+          }
+        },
+        Ciudades: {
+          bsonType: 'array',
+          description: 'must be an array and is required',
+          items: {
+            bsonType: 'object',
+            required: ['Id_Ciudad'],
+            properties: {
+              Id_Ciudad: {
+                bsonType: 'objectId',
+                description: 'must be an objectId and is required'
+              }
+				    }
+          }
+        }
+      }
+    }
+  }
+});
+
+db.createCollection('persona', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['Documento', 'Tipo_Documento', 'Nombre', 'Genero', 'Fecha_Afiliacion', 'Tipo_Afiliado', 'Fecha_Nacimiento', 'Telefonos', 'EPS_Perteneciente'],
+      properties: {
+        Documento: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+        Tipo_Documento: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+        Nombre: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+        Genero: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+        Fecha_Afiliacion: {
+          bsonType: 'date',
+          description: 'must be a date and is required'
+        },
+        Tipo_Afiliado: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+        Fecha_Nacimiento: {
+          bsonType: 'date',
+          description: 'must be a date and is required'
+        }, 
+        Telefonos: {
+          bsonType: 'array',
+          description: 'must be an array and is required',
+          items: {
+            bsonType: 'object',
+            required: ['Id_Telefono'],
+            properties: {
+              Id_Telefono: {
+                bsonType: 'objectId',
+                description: 'must be an objectId and is required'
+              }
+			}
+          }
+        },
+        EPS_Perteneciente: {
+          bsonType: 'objectId',
+          description: 'must be an objectId and is required'
+        }
+      }
+    }
+  }
+});
+
+db.createCollection('agendar', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['Hora_Llamada', 'Duracion', 'Acepta_Terminos', 'Codigo', 'Asiste', 'Fecha_Cita', 'Centro_Vacunacion', 'Telefono', 'Persona'],
+      properties: {
+		Hora_Llamada: {
+          bsonType: 'date',
+          description: 'must be a date and is required'
+        },
+        Duracion: {
+          bsonType: 'number',
+          description: 'must be a number and is required'
+        },
+        Acepta_Terminos: {
+          bsonType: 'bool',
+          description: 'must be a bool and is required'
+        },
+        Codigo: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+        Asiste: {
+          bsonType: 'bool',
+          description: 'must be a bool and is required'
+        },
+        Fecha_Cita: {
+          bsonType: 'date',
+          description: 'must be a date and is required'
+        },
+        Centro_Vacunacion: {
+          bsonType: 'objectId',
+          description: 'must be an objectId and is required'
+        },
+        Vacunacion: {
+          bsonType: 'objectId',
+          description: 'must be an objectId and is required'
+        },
+        Telefono: {
+          bsonType: 'objectId',
+          description: 'must be an objectId and is required'
+        }, 
+        Persona: {
+          bsonType: 'objectId',
+          description: 'must be an objectId and is required'
+        }
+      }
+    }
+  }
+});
+
+
+db.createCollection('telefono', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['Numero', 'Tipo', 'Propietarios', 'Agendar'],
+      properties: {
+        Numero: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+        Tipo: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+		Propietarios: {
+          bsonType: 'array',
+          description: 'must be an array and is required',
+          items: {
+            bsonType: 'object',
+            required: ['Id_Propietario'],
+            properties: {
+              Id_Propietario: {
+                bsonType: 'objectId',
+                description: 'must be an objectId and is required'
+              }
+			}
+          }
+        },
+        Agendar: {
+          bsonType: 'array',
+          description: 'must be an array and is required',
+          items: {
+            bsonType: 'object',
+            required: ['Id_Agenda'],
+            properties: {
+              Id_Agenda: {
+                bsonType: 'objectId',
+                description: 'must be an objectId and is required'
+              }
+			}
+          }
+        }
+      }
+    }
+  }
+});
+
+	db.createCollection('centroVacunacion', {
+	  validator: {
+		$jsonSchema: {
+		  bsonType: 'object',
+		  required: ['Nombre_Centro', 'Agendas'],
+		  properties: {
+			Nombre_Centro: {
+			  bsonType: 'string',
+			  description: 'must be a string and is required'
+			},
+			Agendas: {
+			  bsonType: 'array',
+			  description: 'must be an array and is required',
+			  items: {
+				bsonType: 'object',
+				required: ['Id_Agenda'],
+				properties: {
+				  Id_Agenda: {
+					bsonType: 'objectId',
+					description: 'must be an objectId and is required'
+				  }
+				}
+			  }
+			}
+		  }
+		}
+	  }
+	});
+
+db.createCollection('vacunacion', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['_id', 'Reaccion_Alergica', 'Acompanado', 'Documento_Acompanante', 'Tipo_Doc_Acomp', 'Vacuna'],
+      properties: {
+		_id:{
+			bsonType: 'objectId',
+			description: 'must be a objectId and is required'
+		},
+        Reaccion_Alergica: {
+          bsonType: 'bool',
+          description: 'must be a bool and is required'
+        },
+        Acompanado: {
+          bsonType: 'bool',
+          description: 'must be a bool and is required'
+        },
+        Documento_Acompanante: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+        Tipo_Doc_Acomp: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+        Vacuna: {
+          bsonType: 'objectId',
+          description: 'must be a objectId and is required'
+        },
+        Agenda: {
+          bsonType: 'objectId',
+          description: 'must be a objectId and is required'
+		}
+      }
+    }
+  }
+});
+
+db.createCollection('vacuna', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['Nombre_Vacuna', 'Vacunaciones'],
+      properties: {
+        Nombre_Vacuna: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+        Vacunaciones: {
+          bsonType: 'array',
+          description: 'must be an array and is required',
+          items: {
+            bsonType: 'object',
+            required: ['Id_Vacunacion'],
+            properties: {
+              Id_Vacunacion: {
+                bsonType: 'objectId',
+                description: 'must be an objectId and is required'
+              }
+			}
+          }
+        }
+      }
+    }
+  }
+});
+
+//Ciudades
+db.ciudad.insertOne({Nombre_Ciudad: "BogotÃ¡", EPSs: []});
+db.ciudad.insertOne({Nombre_Ciudad: "Cali", EPSs: []});
+
+var ciudad1 = db.ciudad.findOne({Nombre_Ciudad: "BogotÃ¡"});
+var ciudad2 = db.ciudad.findOne({Nombre_Ciudad: "Cali"});
+
+//EPSs
+db.eps.insertOne({Nombre_EPS: "Cafe Salud", Afiliados: [], Ciudades: [ {Id_Ciudad: ciudad1._id }, {Id_Ciudad: ciudad2._id}]});
+db.eps.insertOne({Nombre_EPS: "Colsanitas", Afiliados: [], Ciudades: [{Id_Ciudad: ciudad1._id }, {Id_Ciudad: ciudad2._id }]});
+
+var eps1 = db.eps.findOne({Nombre_EPS: "Cafe Salud"});
+var eps2 = db.eps.findOne({Nombre_EPS: "Colsanitas"});
+
+//Agregar EPSs a las Ciudades
+db.ciudad.update({_id: ciudad1._id}, {$push:{EPSs: {$each: [{Id_EPS: eps1._id}, {Id_EPS: eps2._id}] }}});
+db.ciudad.update({_id: ciudad2._id}, {$push:{EPSs: {$each: [{Id_EPS: eps1._id}, {Id_EPS: eps2._id}] }}});
+
+//Personas
+db.persona.insertOne({Documento: "10003", Tipo_Documento: "CC", Nombre: "Juan Perez", Genero: "M", Fecha_Afiliacion: new Date("2014, 11, 12"), Tipo_Afiliado: 'C', Fecha_Nacimiento: new Date("1990, 10, 12"), Telefonos: [], EPS_Perteneciente: eps1._id });
+db.persona.insertOne({Documento: "23453", Tipo_Documento: "CC", Nombre: "Laura Laverde", Genero: "F", Fecha_Afiliacion: new Date("2017, 05, 04"), Tipo_Afiliado: 'B', Fecha_Nacimiento: new Date("2000, 01, 16"), Telefonos: [], EPS_Perteneciente: eps2._id });
+db.persona.insertOne({Documento: "87673", Tipo_Documento: "CE", Nombre: "Sofia Iregui", Genero: "F", Fecha_Afiliacion: new Date("2020, 08, 29"), Tipo_Afiliado: 'C', Fecha_Nacimiento: new Date("2002, 05, 21"), Telefonos: [], EPS_Perteneciente: eps1._id });
+db.persona.insertOne({Documento: "97221", Tipo_Documento: "CE", Nombre: "Vivian Plazas", Genero: "F", Fecha_Afiliacion: new Date("2021, 05, 29"), Tipo_Afiliado: 'B', Fecha_Nacimiento: new Date("1995, 03, 26"), Telefonos: [], EPS_Perteneciente: eps2._id });
+db.persona.insertOne({Documento: "81119", Tipo_Documento: "CC", Nombre: "Sebastian PabÃ³n", Genero: "M", Fecha_Afiliacion: new Date("2018, 01, 15"), Tipo_Afiliado: 'C', Fecha_Nacimiento: new Date("2000, 07, 03"), Telefonos: [], EPS_Perteneciente: eps1._id });
+db.persona.insertOne({Documento: "88281", Tipo_Documento: "CC", Nombre: "Camilo CÃ¡ceres", Genero: "M", Fecha_Afiliacion: new Date("2016, 08, 14"), Tipo_Afiliado: 'B', Fecha_Nacimiento: new Date("2001, 06, 15"), Telefonos: [], EPS_Perteneciente: eps2._id });
+db.persona.insertOne({Documento: "13577", Tipo_Documento: "CC", Nombre: "David Matallana", Genero: "M", Fecha_Afiliacion: new Date("2011, 07, 13"), Tipo_Afiliado: 'C', Fecha_Nacimiento: new Date("1995, 03, 18"), Telefonos: [], EPS_Perteneciente: eps1._id });
+db.persona.insertOne({Documento: "76543", Tipo_Documento: "CE", Nombre: "Esteban Tapiero", Genero: "M", Fecha_Afiliacion: new Date("2019, 10, 14"), Tipo_Afiliado: 'B', Fecha_Nacimiento: new Date("2001, 09, 30"), Telefonos: [], EPS_Perteneciente: eps2._id });
+db.persona.insertOne({Documento: "77774", Tipo_Documento: "CE", Nombre: "Natalia Bernal", Genero: "F", Fecha_Afiliacion: new Date("2004, 06, 04"), Tipo_Afiliado: 'C', Fecha_Nacimiento: new Date("2000, 06, 15"), Telefonos: [], EPS_Perteneciente: eps1._id });
+db.persona.insertOne({Documento: "98722", Tipo_Documento: "CC", Nombre: "Laura GarcÃ­a", Genero: "F", Fecha_Afiliacion: new Date("2017, 09, 25"), Tipo_Afiliado: 'B', Fecha_Nacimiento: new Date("2002, 12, 21"), Telefonos: [], EPS_Perteneciente: eps2._id });
+db.persona.insertOne({Documento: "1011", Tipo_Documento: "CC", Nombre: "Isabella LÃ³pez", Genero: "F", Fecha_Afiliacion: new Date("2001, 06, 12"), Tipo_Afiliado: 'C', Fecha_Nacimiento: new Date ("1939, 01, 25"), Telefonos: [], EPS_Perteneciente: eps2._id });
+db.persona.insertOne({Documento: "1012", Tipo_Documento: "CE", Nombre: "Juan CortÃ©s", Genero: "M", Fecha_Afiliacion: new Date("2009, 05, 08"), Tipo_Afiliado: 'B', Fecha_Nacimiento: new Date ("2000, 10, 29"), Telefonos: [], EPS_Perteneciente: eps1._id });
+db.persona.insertOne({Documento: "1013", Tipo_Documento: "CE", Nombre: "Darwin Moreno", Genero: "M", Fecha_Afiliacion: new Date("1999, 09, 13"), Tipo_Afiliado: 'C', Fecha_Nacimiento: new Date ("1940, 08, 11"), Telefonos: [], EPS_Perteneciente: eps2._id });
+db.persona.insertOne({Documento: "1014", Tipo_Documento: "CC", Nombre: "Mateo Quintero", Genero: "M", Fecha_Afiliacion: new Date("2012, 07, 21"), Tipo_Afiliado: 'B', Fecha_Nacimiento: new Date ("1999, 01, 30"), Telefonos: [], EPS_Perteneciente: eps1._id });
+db.persona.insertOne({Documento: "1015", Tipo_Documento: "CC", Nombre: "JuliÃ¡n Velandia", Genero: "M", Fecha_Afiliacion: new Date("2000, 03, 14"), Tipo_Afiliado: 'C', Fecha_Nacimiento: new Date ("1987, 12, 15"), Telefonos: [], EPS_Perteneciente: eps2._id });
+db.persona.insertOne({Documento: "1016", Tipo_Documento: "CE", Nombre: "IvÃ¡n Meza", Genero: "M", Fecha_Afiliacion: new Date("2005, 02, 09"), Tipo_Afiliado: 'C', Fecha_Nacimiento: new Date ("1985, 04, 20"), Telefonos: [], EPS_Perteneciente: eps1._id });
+db.persona.insertOne({Documento: "1017", Tipo_Documento: "CE", Nombre: "David Sarmiento", Genero: "M", Fecha_Afiliacion: new Date("2015, 11, 05"), Tipo_Afiliado: 'B', Fecha_Nacimiento: new Date ("1966, 05, 31"), Telefonos: [], EPS_Perteneciente: eps2._id });
+db.persona.insertOne({Documento: "1018", Tipo_Documento: "CC", Nombre: "Cristian Guacheta", Genero: "M", Fecha_Afiliacion: new Date("2014, 06, 19"), Tipo_Afiliado: 'B', Fecha_Nacimiento: new Date ("1991, 10, 09"), Telefonos: [], EPS_Perteneciente: eps1._id });
+db.persona.insertOne({Documento: "1019", Tipo_Documento: "CE", Nombre: "Lina De Greiff", Genero: "F", Fecha_Afiliacion: new Date("2009, 07, 11"), Tipo_Afiliado: 'B', Fecha_Nacimiento: new Date ("2001, 12, 24"), Telefonos: [], EPS_Perteneciente: eps1._id });
+db.persona.insertOne({Documento: "1020", Tipo_Documento: "CE", Nombre: "Catalina Ardila", Genero: "F", Fecha_Afiliacion: new Date("2003, 09, 12"), Tipo_Afiliado: 'B', Fecha_Nacimiento: new Date ("1996, 09, 12"), Telefonos: [], EPS_Perteneciente: eps2._id });
+db.persona.insertOne({Documento: "876730", Tipo_Documento: "TI", Nombre: "Santiago Paz", Genero: "M", Fecha_Afiliacion: new Date("2020, 08, 29"), Tipo_Afiliado: 'C', Fecha_Nacimiento: new Date("2005, 05, 21"), Telefonos: [], EPS_Perteneciente: eps1._id });
+db.persona.insertOne({Documento: "987220", Tipo_Documento: "TI", Nombre: "Nykol Sabogal", Genero: "F", Fecha_Afiliacion: new Date("2017, 09, 25"), Tipo_Afiliado: 'B', Fecha_Nacimiento: new Date("2008, 12, 21"), Telefonos: [], EPS_Perteneciente: eps2._id });
+db.persona.insertOne({Documento: "101987", Tipo_Documento: "TI", Nombre: "Nicole Herrera", Genero: "F", Fecha_Afiliacion: new Date("2009, 07, 11"), Tipo_Afiliado: 'B', Fecha_Nacimiento: new Date ("2004, 12, 24"), Telefonos: [], EPS_Perteneciente: eps2._id });
+
+
+//db.persona.insertOne({Documento: "1000125358", Tipo_Documento: "CC", Nombre: "Jess", Genero: "F", Fecha_Afiliacion: new Date("2009, 07, 11"), Tipo_Afiliado: 'C', Fecha_Nacimiento: new Date ("2002, 03, 22"), Telefonos: [{Id_Telefono: t1._id}], EPS_Perteneciente: eps2._id });
+//var prueba1 = db.persona.findOne({Tipo_Documento: "CC", Documento: "1000125358"});
+//db.persona.insertOne({Documento: "1000352061", Tipo_Documento: "CC", Nombre: "Cami", Genero: "F", Fecha_Afiliacion: new Date("2011, 08, 21"), Tipo_Afiliado: 'C', Fecha_Nacimiento: new Date ("2002, 06, 08"), Telefonos: [{Id_Telefono: t1._id}], EPS_Perteneciente: eps2._id });
+//var prueba2 = db.persona.findOne({Tipo_Documento: "CC", Documento: "1000352061"});
+
+
+var p1 = db.persona.findOne({Tipo_Documento: "CC", Documento: "10003"});
+var p2 = db.persona.findOne({Tipo_Documento: "CC", Documento: "23453"});
+var p3 = db.persona.findOne({Tipo_Documento: "CE", Documento: "87673"});
+var p4 = db.persona.findOne({Tipo_Documento: "CE", Documento: "97221"});
+var p5 = db.persona.findOne({Tipo_Documento: "CC", Documento: "81119"});
+var p6 = db.persona.findOne({Tipo_Documento: "CC", Documento: "88281"});
+var p7 = db.persona.findOne({Tipo_Documento: "CC", Documento: "13577"});
+var p8 = db.persona.findOne({Tipo_Documento: "CE", Documento: "76543"});
+var p9 = db.persona.findOne({Tipo_Documento: "CE", Documento: "77774"});
+var p10 = db.persona.findOne({Tipo_Documento: "CC", Documento: "98722"});
+var p11 = db.persona.findOne({Tipo_Documento: "CC", Documento: "1011"});
+var p12 = db.persona.findOne({Tipo_Documento: "CE", Documento: "1012"});
+var p13 = db.persona.findOne({Tipo_Documento: "CE", Documento: "1013"});
+var p14 = db.persona.findOne({Tipo_Documento: "CC", Documento: "1014"});
+var p15 = db.persona.findOne({Tipo_Documento: "CC", Documento: "1015"});
+var p16 = db.persona.findOne({Tipo_Documento: "CE", Documento: "1016"});
+var p17 = db.persona.findOne({Tipo_Documento: "CE", Documento: "1017"});
+var p18 = db.persona.findOne({Tipo_Documento: "CC", Documento: "1018"});
+var p19 = db.persona.findOne({Tipo_Documento: "CE", Documento: "1019"});
+var p20 = db.persona.findOne({Tipo_Documento: "CE", Documento: "1020"});
+var p21 = db.persona.findOne({Tipo_Documento: "TI", Documento: "876730"});
+var p22 = db.persona.findOne({Tipo_Documento: "TI", Documento: "987220"});
+var p23 = db.persona.findOne({Tipo_Documento: "TI", Documento: "101987"});
+
+//Telefonos
+db.telefono.insertOne({Numero: '19876787', Tipo: 'F', Propietarios: [{Id_Propietario: p1._id},{Id_Propietario: p21._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3123168754', Tipo: 'C', Propietarios: [{Id_Propietario: p1._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3123178754', Tipo: 'C', Propietarios: [{Id_Propietario: p1._id}], Agendar: []});
+db.telefono.insertOne({Numero: '8289191', Tipo: 'F', Propietarios: [{Id_Propietario: p2._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3162819191', Tipo: 'C', Propietarios: [{Id_Propietario: p2._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3162819292', Tipo: 'C', Propietarios: [{Id_Propietario: p2._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3214383', Tipo: 'F', Propietarios: [{Id_Propietario: p3._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3128437583', Tipo: 'C', Propietarios: [{Id_Propietario: p3._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3128435783', Tipo: 'C', Propietarios: [{Id_Propietario: p3._id}], Agendar: []});
+db.telefono.insertOne({Numero: '8821111', Tipo: 'F', Propietarios: [{Id_Propietario: p4._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3168829111', Tipo: 'C', Propietarios: [{Id_Propietario: p4._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3168729121', Tipo: 'C', Propietarios: [{Id_Propietario: p4._id}], Agendar: []});
+db.telefono.insertOne({Numero: '9877763', Tipo: 'F', Propietarios: [{Id_Propietario: p5._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3149877763', Tipo: 'C', Propietarios: [{Id_Propietario: p5._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3149875263', Tipo: 'C', Propietarios: [{Id_Propietario: p5._id}], Agendar: []});
+db.telefono.insertOne({Numero: '2228844', Tipo: 'F', Propietarios: [{Id_Propietario: p6._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3124184844', Tipo: 'C', Propietarios: [{Id_Propietario: p6._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3124184866', Tipo: 'C', Propietarios: [{Id_Propietario: p6._id}], Agendar: []});
+db.telefono.insertOne({Numero: '7272221', Tipo: 'F', Propietarios: [{Id_Propietario: p7._id}], Agendar: []});
+db.telefono.insertOne({Numero: '317272221', Tipo: 'C', Propietarios: [{Id_Propietario: p7._id}], Agendar: []});
+db.telefono.insertOne({Numero: '317279921', Tipo: 'C', Propietarios: [{Id_Propietario: p7._id}], Agendar: []});
+db.telefono.insertOne({Numero: '9438211', Tipo: 'F', Propietarios: [{Id_Propietario: p8._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3194382111', Tipo: 'C', Propietarios: [{Id_Propietario: p8._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3194382122', Tipo: 'C', Propietarios: [{Id_Propietario: p8._id}], Agendar: []});
+db.telefono.insertOne({Numero: '34329239', Tipo: 'F', Propietarios: [{Id_Propietario: p9._id},{Id_Propietario: p22._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3214382122', Tipo: 'C', Propietarios: [{Id_Propietario: p9._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3204388922', Tipo: 'C', Propietarios: [{Id_Propietario: p9._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3243885', Tipo: 'F', Propietarios: [{Id_Propietario: p10._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3214383485', Tipo: 'C', Propietarios: [{Id_Propietario: p10._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3124383485', Tipo: 'C', Propietarios: [{Id_Propietario: p10._id}], Agendar: []});
+db.telefono.insertOne({Numero: '4336879', Tipo: 'F', Propietarios: [{Id_Propietario: p11._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3164336879', Tipo: 'C', Propietarios: [{Id_Propietario: p11._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3174386879', Tipo: 'C', Propietarios: [{Id_Propietario: p11._id}], Agendar: []});
+db.telefono.insertOne({Numero: '9000379', Tipo: 'F', Propietarios: [{Id_Propietario: p12._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3009000379', Tipo: 'C', Propietarios: [{Id_Propietario: p12._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3019001379', Tipo: 'C', Propietarios: [{Id_Propietario: p12._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3046758', Tipo: 'F', Propietarios: [{Id_Propietario: p13._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3046758901', Tipo: 'C', Propietarios: [{Id_Propietario: p13._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3056778901', Tipo: 'C', Propietarios: [{Id_Propietario: p13._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3012345', Tipo: 'F', Propietarios: [{Id_Propietario: p14._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3012345678', Tipo: 'C', Propietarios: [{Id_Propietario: p14._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3122345478', Tipo: 'C', Propietarios: [{Id_Propietario: p14._id}], Agendar: []});
+db.telefono.insertOne({Numero: '2768901', Tipo: 'F', Propietarios: [{Id_Propietario: p15._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3202768901', Tipo: 'C', Propietarios: [{Id_Propietario: p15._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3182768901', Tipo: 'C', Propietarios: [{Id_Propietario: p15._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3256789', Tipo: 'C', Propietarios: [{Id_Propietario: p16._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3123456789', Tipo: 'C', Propietarios: [{Id_Propietario: p16._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3123490789', Tipo: 'C', Propietarios: [{Id_Propietario: p16._id}], Agendar: []});
+db.telefono.insertOne({Numero: '8037676', Tipo: 'F', Propietarios: [{Id_Propietario: p17._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3128037676', Tipo: 'C', Propietarios: [{Id_Propietario: p17._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3168037676', Tipo: 'C', Propietarios: [{Id_Propietario: p17._id}], Agendar: []});
+db.telefono.insertOne({Numero: '4567890', Tipo: 'F', Propietarios: [{Id_Propietario: p18._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3214567890', Tipo: 'C', Propietarios: [{Id_Propietario: p18._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3114567894', Tipo: 'C', Propietarios: [{Id_Propietario: p18._id}], Agendar: []});
+db.telefono.insertOne({Numero: '5227890', Tipo: 'F', Propietarios: [{Id_Propietario: p19._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3215227890', Tipo: 'C', Propietarios: [{Id_Propietario: p19._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3115228894', Tipo: 'C', Propietarios: [{Id_Propietario: p19._id}], Agendar: []});
+db.telefono.insertOne({Numero: '4709156', Tipo: 'F', Propietarios: [{Id_Propietario: p23._id},{Id_Propietario: p20._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3165239769', Tipo: 'C', Propietarios: [{Id_Propietario: p20._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3175239760', Tipo: 'C', Propietarios: [{Id_Propietario: p20._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3145839761', Tipo: 'C', Propietarios: [{Id_Propietario: p21._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3125289762', Tipo: 'C', Propietarios: [{Id_Propietario: p22._id}], Agendar: []});
+db.telefono.insertOne({Numero: '3165238763', Tipo: 'C', Propietarios: [{Id_Propietario: p23._id}], Agendar: []});
+
+var t1 = db.telefono.findOne({Numero: "19876787"});
+var t2 = db.telefono.findOne({Numero: "3123168754"});
+var t3 = db.telefono.findOne({Numero: "3123178754"});
+var t4 = db.telefono.findOne({Numero: "8289191"});
+var t5 = db.telefono.findOne({Numero: "3162819191"});
+var t6 = db.telefono.findOne({Numero: "3162819292"});
+var t7 = db.telefono.findOne({Numero: "3214383"});
+var t8 = db.telefono.findOne({Numero: "3128437583"});
+var t9 = db.telefono.findOne({Numero: "3128435783"});
+var t10 = db.telefono.findOne({Numero: "8821111"});
+var t11 = db.telefono.findOne({Numero: "3168829111"});
+var t12 = db.telefono.findOne({Numero: "3168729121"});
+var t13 = db.telefono.findOne({Numero: "9877763"});
+var t14 = db.telefono.findOne({Numero: "3149877763"});
+var t15 = db.telefono.findOne({Numero: "3149875263"});
+var t16 = db.telefono.findOne({Numero: "2228844"});
+var t17 = db.telefono.findOne({Numero: "3124184844"});
+var t18 = db.telefono.findOne({Numero: "3124184866"});
+var t19 = db.telefono.findOne({Numero: "7272221"});
+var t20 = db.telefono.findOne({Numero: "317272221"});
+var t21 = db.telefono.findOne({Numero: "317279921"});
+var t22 = db.telefono.findOne({Numero: "9438211"});
+var t23 = db.telefono.findOne({Numero: "3194382111"});
+var t24 = db.telefono.findOne({Numero: "3194382122"});
+var t25 = db.telefono.findOne({Numero: "34329239"});
+var t26 = db.telefono.findOne({Numero: "3214382122"});
+var t27 = db.telefono.findOne({Numero: "3204388922"});
+var t28 = db.telefono.findOne({Numero: "3243885"});
+var t29 = db.telefono.findOne({Numero: "3214383485"});
+var t30 = db.telefono.findOne({Numero: "3124383485"});
+var t31 = db.telefono.findOne({Numero: "4336879"});
+var t32 = db.telefono.findOne({Numero: "3164336879"});
+var t33 = db.telefono.findOne({Numero: "3174386879"});
+var t34 = db.telefono.findOne({Numero: "9000379"});
+var t35 = db.telefono.findOne({Numero: "3009000379"});
+var t36 = db.telefono.findOne({Numero: "3019001379"});
+var t37 = db.telefono.findOne({Numero: "3046758"});
+var t38 = db.telefono.findOne({Numero: "3046758901"});
+var t39 = db.telefono.findOne({Numero: "3056778901"});
+var t40 = db.telefono.findOne({Numero: "3012345"});
+var t41 = db.telefono.findOne({Numero: "3012345678"});
+var t42 = db.telefono.findOne({Numero: "3122345478"});
+var t43 = db.telefono.findOne({Numero: "2768901"});
+var t44 = db.telefono.findOne({Numero: "3202768901"});
+var t45 = db.telefono.findOne({Numero: "3182768901"});
+var t46 = db.telefono.findOne({Numero: "3256789"});
+var t47 = db.telefono.findOne({Numero: "3123456789"});
+var t48 = db.telefono.findOne({Numero: "3123490789"});
+var t49 = db.telefono.findOne({Numero: "8037676"});
+var t50 = db.telefono.findOne({Numero: "3128037676"});
+var t51 = db.telefono.findOne({Numero: "3168037676"});
+var t52 = db.telefono.findOne({Numero: "4567890"});
+var t53 = db.telefono.findOne({Numero: "3214567890"});
+var t54 = db.telefono.findOne({Numero: "3114567894"});
+var t55 = db.telefono.findOne({Numero: "5227890"});
+var t56 = db.telefono.findOne({Numero: "3215227890"});
+var t57 = db.telefono.findOne({Numero: "3115228894"});
+var t58 = db.telefono.findOne({Numero: "4709156"});
+var t59 = db.telefono.findOne({Numero: "3165239769"});
+var t60 = db.telefono.findOne({Numero: "3175239760"});
+var t61 = db.telefono.findOne({Numero: "3145839761"});
+var t62 = db.telefono.findOne({Numero: "3125289762"});
+var t63 = db.telefono.findOne({Numero: "3165238763"});
+
+//Agregar telÃ©fonos a personas
+db.persona.update({_id: p1._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t1._id}, {Id_Telefono: t2._id}, {Id_Telefono: t3._id}]}}});
+db.persona.update({_id: p2._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t4._id}, {Id_Telefono: t5._id}, {Id_Telefono: t6._id}]}}});
+db.persona.update({_id: p3._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t7._id}, {Id_Telefono: t8._id}, {Id_Telefono: t9._id}]}}});
+db.persona.update({_id: p4._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t10._id}, {Id_Telefono: t11._id}, {Id_Telefono: t12._id}]}}});
+db.persona.update({_id: p5._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t13._id}, {Id_Telefono: t14._id}, {Id_Telefono: t15._id}]}}});
+db.persona.update({_id: p6._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t16._id}, {Id_Telefono: t17._id}, {Id_Telefono: t18._id}]}}});
+db.persona.update({_id: p7._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t19._id}, {Id_Telefono: t20._id}, {Id_Telefono: 21._id}]}}});
+db.persona.update({_id: p8._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t22._id}, {Id_Telefono: t23._id}, {Id_Telefono: t24._id}]}}});
+db.persona.update({_id: p9._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t25._id}, {Id_Telefono: t26._id}, {Id_Telefono: t27._id}]}}});
+db.persona.update({_id: p10._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t28._id}, {Id_Telefono: t29._id}, {Id_Telefono: t30._id}]}}});
+db.persona.update({_id: p11._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t31._id}, {Id_Telefono: t32._id}, {Id_Telefono: t33._id}]}}});
+db.persona.update({_id: p12._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t34._id}, {Id_Telefono: t35._id}, {Id_Telefono: t36._id}]}}});
+db.persona.update({_id: p13._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t37._id}, {Id_Telefono: t38._id}, {Id_Telefono: t39._id}]}}});
+db.persona.update({_id: p14._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t40._id}, {Id_Telefono: t41._id}, {Id_Telefono: t42._id}]}}});
+db.persona.update({_id: p15._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t43._id}, {Id_Telefono: t44._id}, {Id_Telefono: t45._id}]}}});
+db.persona.update({_id: p16._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t46._id}, {Id_Telefono: t47._id}, {Id_Telefono: t48._id}]}}});
+db.persona.update({_id: p17._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t49._id}, {Id_Telefono: t50._id}, {Id_Telefono: t51._id}]}}});
+db.persona.update({_id: p18._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t52._id}, {Id_Telefono: t53._id}, {Id_Telefono: t54._id}]}}});
+db.persona.update({_id: p19._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t55._id}, {Id_Telefono: t56._id}, {Id_Telefono: t57._id}]}}});
+db.persona.update({_id: p20._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t58._id}, {Id_Telefono: t59._id}, {Id_Telefono: t60._id}]}}});
+db.persona.update({_id: p21._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t1._id},{Id_Telefono: t61._id}]}}});
+db.persona.update({_id: p22._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t25._id},{Id_Telefono: t62._id}]}}});
+db.persona.update({_id: p23._id}, {$push:{Telefonos: {$each: [{Id_Telefono: t58._id},{Id_Telefono: t63._id}]}}});
+
+//Vacunas 
+db.vacuna.insertOne({Nombre_Vacuna: "Pfizer", Vacunaciones: []});
+db.vacuna.insertOne({Nombre_Vacuna: "Sinovac", Vacunaciones: []});
+db.vacuna.insertOne({Nombre_Vacuna: "Moderna", Vacunaciones: []});
+
+var vac1 = db.vacuna.findOne({Nombre_Vacuna: "Pfizer"});
+var vac2 = db.vacuna.findOne({Nombre_Vacuna: "Sinovac"});
+var vac3 = db.vacuna.findOne({Nombre_Vacuna: "Moderna"});
+
+//Vacunacion
+db.vacunacion.insertOne({_id: ObjectId("61b02c68cd43fd2286f927e0"), Reaccion_Alergica: true, Acompanado: true, Documento_Acompanante: '2342424532', Tipo_Doc_Acomp: 'CC', Vacuna: vac1._id});
+db.vacunacion.insertOne({_id: ObjectId("62b02c68cd43fd2286f927e0"), Reaccion_Alergica: false, Acompanado: true, Documento_Acompanante: '437238383', Tipo_Doc_Acomp: 'CC', Vacuna: vac2._id});
+db.vacunacion.insertOne({_id: ObjectId("63b02c68cd43fd2286f927e0"), Reaccion_Alergica: false, Acompanado: true, Documento_Acompanante: '100038383', Tipo_Doc_Acomp: 'CC', Vacuna: vac3._id});
+db.vacunacion.insertOne({_id: ObjectId("64b02c68cd43fd2286f927e0"), Reaccion_Alergica: false, Acompanado: true, Documento_Acompanante: '348282822', Tipo_Doc_Acomp: 'CC', Vacuna: vac1._id});
+db.vacunacion.insertOne({_id: ObjectId("65b02c68cd43fd2286f927e0"), Reaccion_Alergica: false, Acompanado: true, Documento_Acompanante: '527782822', Tipo_Doc_Acomp: 'CC', Vacuna: vac2._id});
+db.vacunacion.insertOne({_id: ObjectId("66b02c68cd43fd2286f927e0"), Reaccion_Alergica: false, Acompanado: true, Documento_Acompanante: '991291111', Tipo_Doc_Acomp: 'CC', Vacuna: vac3._id});
+db.vacunacion.insertOne({_id: ObjectId("67b02c68cd43fd2286f927e0"), Reaccion_Alergica: true, Acompanado: true, Documento_Acompanante: '10001111', Tipo_Doc_Acomp: 'CC', Vacuna: vac1._id});
+db.vacunacion.insertOne({_id: ObjectId("68b02c68cd43fd2286f927e0"), Reaccion_Alergica: false, Acompanado: true, Documento_Acompanante: '5766267211', Tipo_Doc_Acomp: 'CC', Vacuna: vac2._id});
+db.vacunacion.insertOne({_id: ObjectId("69b02c68cd43fd2286f927e0"), Reaccion_Alergica: false, Acompanado: true, Documento_Acompanante: '5766260000', Tipo_Doc_Acomp: 'CC', Vacuna: vac3._id});
+db.vacunacion.insertOne({_id: ObjectId("70b02c68cd43fd2286f927e0"), Reaccion_Alergica: false, Acompanado: true, Documento_Acompanante: '5766261111', Tipo_Doc_Acomp: 'CC', Vacuna: vac1._id});
+db.vacunacion.insertOne({_id: ObjectId("71b02c68cd43fd2286f927e0"), Reaccion_Alergica: false, Acompanado: true, Documento_Acompanante: '8283727218', Tipo_Doc_Acomp: 'CC', Vacuna: vac2._id});
+db.vacunacion.insertOne({_id: ObjectId("72b02c68cd43fd2286f927e0"), Reaccion_Alergica: false, Acompanado: true, Documento_Acompanante: '5233291999', Tipo_Doc_Acomp: 'CC', Vacuna: vac3._id});
+db.vacunacion.insertOne({_id: ObjectId("73b02c68cd43fd2286f927e0"), Reaccion_Alergica: false, Acompanado: true, Documento_Acompanante: '8465291999', Tipo_Doc_Acomp: 'CC', Vacuna: vac1._id});
+db.vacunacion.insertOne({_id: ObjectId("74b02c68cd43fd2286f927e0"), Reaccion_Alergica: false, Acompanado: true, Documento_Acompanante: '6543291999', Tipo_Doc_Acomp: 'CC', Vacuna: vac2._id});
+db.vacunacion.insertOne({_id: ObjectId("75b02c68cd43fd2286f927e0"), Reaccion_Alergica: false, Acompanado: true, Documento_Acompanante: '37228999911', Tipo_Doc_Acomp: 'CC', Vacuna: vac3._id});
+db.vacunacion.insertOne({_id: ObjectId("76b02c68cd43fd2286f927e0"), Reaccion_Alergica: false, Acompanado: true, Documento_Acompanante: '9299296758', Tipo_Doc_Acomp: 'CC', Vacuna: vac1._id});
+db.vacunacion.insertOne({_id: ObjectId("77b02c68cd43fd2286f927e0"), Reaccion_Alergica: false, Acompanado: true, Documento_Acompanante: '9294341999', Tipo_Doc_Acomp: 'CC', Vacuna: vac2._id});
+db.vacunacion.insertOne({_id: ObjectId("78b02c68cd43fd2286f927e0"), Reaccion_Alergica: false, Acompanado: true, Documento_Acompanante: '98372668182', Tipo_Doc_Acomp: 'CC', Vacuna: vac3._id});
+db.vacunacion.insertOne({_id: ObjectId("79b02c68cd43fd2286f927e0"), Reaccion_Alergica: false, Acompanado: true, Documento_Acompanante: '9298712999', Tipo_Doc_Acomp: 'CC', Vacuna: vac2._id});
+db.vacunacion.insertOne({_id: ObjectId("80b02c68cd43fd2286f927e0"), Reaccion_Alergica: true, Acompanado: true, Documento_Acompanante: '843726525555', Tipo_Doc_Acomp: 'CC', Vacuna: vac3._id});
+db.vacunacion.insertOne({_id: ObjectId("81b02c68cd43fd2286f927e0"), Reaccion_Alergica: true, Acompanado: true, Documento_Acompanante: '843726525555', Tipo_Doc_Acomp: 'CC', Vacuna: vac1._id});
+
+var vacunacion1 = db.vacunacion.findOne({_id: ObjectId("61b02c68cd43fd2286f927e0")});
+var vacunacion2 = db.vacunacion.findOne({_id: ObjectId("62b02c68cd43fd2286f927e0")});
+var vacunacion3 = db.vacunacion.findOne({_id: ObjectId("63b02c68cd43fd2286f927e0")});
+var vacunacion4 = db.vacunacion.findOne({_id: ObjectId("64b02c68cd43fd2286f927e0")});
+var vacunacion5 = db.vacunacion.findOne({_id: ObjectId("65b02c68cd43fd2286f927e0")});
+var vacunacion6 = db.vacunacion.findOne({_id: ObjectId("66b02c68cd43fd2286f927e0")});
+var vacunacion7 = db.vacunacion.findOne({_id: ObjectId("67b02c68cd43fd2286f927e0")});
+var vacunacion8 = db.vacunacion.findOne({_id: ObjectId("68b02c68cd43fd2286f927e0")});
+var vacunacion9 = db.vacunacion.findOne({_id: ObjectId("69b02c68cd43fd2286f927e0")});
+var vacunacion10 = db.vacunacion.findOne({_id: ObjectId("70b02c68cd43fd2286f927e0")});
+var vacunacion11 = db.vacunacion.findOne({_id: ObjectId("71b02c68cd43fd2286f927e0")});
+var vacunacion12 = db.vacunacion.findOne({_id: ObjectId("72b02c68cd43fd2286f927e0")});
+var vacunacion13 = db.vacunacion.findOne({_id: ObjectId("73b02c68cd43fd2286f927e0")});
+var vacunacion14 = db.vacunacion.findOne({_id: ObjectId("74b02c68cd43fd2286f927e0")});
+var vacunacion15 = db.vacunacion.findOne({_id: ObjectId("75b02c68cd43fd2286f927e0")});
+var vacunacion16 = db.vacunacion.findOne({_id: ObjectId("76b02c68cd43fd2286f927e0")});
+var vacunacion17 = db.vacunacion.findOne({_id: ObjectId("77b02c68cd43fd2286f927e0")});
+var vacunacion18 = db.vacunacion.findOne({_id: ObjectId("78b02c68cd43fd2286f927e0")});
+var vacunacion19 = db.vacunacion.findOne({_id: ObjectId("79b02c68cd43fd2286f927e0")});
+var vacunacion20 = db.vacunacion.findOne({_id: ObjectId("80b02c68cd43fd2286f927e0")});
+var vacunacion21 = db.vacunacion.findOne({_id: ObjectId("81b02c68cd43fd2286f927e0")});
+
+//Asignar Vacunaciones a Vacuna
+db.vacuna.update({_id: vac1._id}, {$push:{Vacunaciones: {$each: [{Id_Vacunacion: vacunacion1._id},{Id_Vacunacion: vacunacion4._id},{Id_Vacunacion: vacunacion7._id},{Id_Vacunacion: vacunacion10._id},{Id_Vacunacion: vacunacion13._id},{Id_Vacunacion: vacunacion16._id},{Id_Vacunacion: vacunacion21._id}]}}});
+db.vacuna.update({_id: vac2._id}, {$push:{Vacunaciones: {$each: [{Id_Vacunacion: vacunacion2._id},{Id_Vacunacion: vacunacion5._id},{Id_Vacunacion: vacunacion8._id},{Id_Vacunacion: vacunacion11._id},{Id_Vacunacion: vacunacion14._id},{Id_Vacunacion: vacunacion17._id},{Id_Vacunacion: vacunacion19._id}]}}});
+db.vacuna.update({_id: vac3._id}, {$push:{Vacunaciones: {$each: [{Id_Vacunacion: vacunacion3._id},{Id_Vacunacion: vacunacion6._id},{Id_Vacunacion: vacunacion9._id},{Id_Vacunacion: vacunacion12._id},{Id_Vacunacion: vacunacion15._id},{Id_Vacunacion: vacunacion18._id},{Id_Vacunacion: vacunacion20._id}]}}});
+
+//Centros de vacunacion 
+db.centroVacunacion.insertOne({Nombre_Centro: "Movistar Arena", Agendas: []});
+db.centroVacunacion.insertOne({Nombre_Centro: "Parqueadero Javeriana", Agendas: []});
+db.centroVacunacion.insertOne({Nombre_Centro: "Bima", Agendas: []});
+
+var cv1 = db.centroVacunacion.findOne({Nombre_Centro: "Movistar Arena"});
+var cv2 = db.centroVacunacion.findOne({Nombre_Centro: "Parqueadero Javeriana"});
+var cv3 = db.centroVacunacion.findOne({Nombre_Centro: "Bima"});
+
+//Agendar
+db.agendar.insertOne({Hora_Llamada: new Date("2021-09-25T12:15:00Z"), Duracion: 60, Acepta_Terminos: true, Codigo: "779",  
+	Asiste: false, Fecha_Cita: new Date("2021-10-10T10:00:00Z"), Centro_Vacunacion : cv1._id, Telefono: t1._id, Persona: p1._id});
+db.agendar.insertOne({Hora_Llamada: new Date("2021-09-28T12:15:00Z"), Duracion: 120, Acepta_Terminos: true, Codigo: "780",  
+	Asiste: true, Fecha_Cita: new Date("2021-10-20T14:00:00Z"), Centro_Vacunacion : cv2._id, Vacunacion: vacunacion1._id, Telefono: t2._id, Persona: p1._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-01-25T12:15:00Z"), Duracion: 110, Acepta_Terminos: true, Codigo: "123",  
+	Asiste: true, Fecha_Cita: new Date("2021-03-25T10:00:00Z"), Centro_Vacunacion : cv3._id, Vacunacion: vacunacion2._id, Telefono: t5._id, Persona: p2._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-02-25T12:15:00Z"), Duracion: 60, Acepta_Terminos: true, Codigo: "800",  
+	Asiste: false, Fecha_Cita: new Date("2021-04-01T10:00:00Z"), Centro_Vacunacion : cv3._id, Telefono: t9._id, Persona: p3._id});
+db.agendar.insertOne({Hora_Llamada: new Date("2021-02-28T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "801",  
+	Asiste: true, Fecha_Cita: new Date("2021-03-14T10:00:00Z"), Centro_Vacunacion : cv1._id, Vacunacion: vacunacion3._id, Telefono: t8._id, Persona: p3._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-03-28T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "100",  
+	Asiste: true, Fecha_Cita: new Date("2021-04-14T10:00:00Z"), Centro_Vacunacion : cv3._id, Vacunacion: vacunacion4._id, Telefono: t11._id, Persona: p4._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-03-30T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "200",  
+	Asiste: true, Fecha_Cita: new Date("2021-04-16T10:00:00Z"), Centro_Vacunacion : cv2._id, Vacunacion: vacunacion5._id, Telefono: t15._id, Persona: p5._id});
+
+db.agendar.insertOne({Hora_Llamada: new Date("2021-04-01T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "300",  
+	Asiste: true, Fecha_Cita: new Date("2021-04-30T10:00:00Z"), Centro_Vacunacion : cv1._id, Vacunacion: vacunacion6._id, Telefono: t17._id, Persona: p6._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-04-10T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "400",  
+	Asiste: true, Fecha_Cita: new Date("2021-04-29T10:00:00Z"), Centro_Vacunacion : cv3._id, Vacunacion: vacunacion7._id, Telefono: t20._id, Persona: p7._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-04-11T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "500",  
+	Asiste: true, Fecha_Cita: new Date("2021-05-14T10:00:00Z"), Centro_Vacunacion : cv2._id, Vacunacion: vacunacion8._id, Telefono: t23._id, Persona: p8._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-04-20T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "600",  
+	Asiste: true, Fecha_Cita: new Date("2021-05-15T10:00:00Z"), Centro_Vacunacion : cv1._id, Vacunacion: vacunacion9._id, Telefono: t26._id, Persona: p9._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-04-21T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "700",  
+	Asiste: true, Fecha_Cita: new Date("2021-05-30T10:00:00Z"), Centro_Vacunacion : cv3._id, Vacunacion: vacunacion10._id, Telefono: t29._id, Persona: p10._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-04-22T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "900",  
+	Asiste: true, Fecha_Cita: new Date("2021-05-31T10:00:00Z"), Centro_Vacunacion : cv2._id, Vacunacion: vacunacion11._id, Telefono: t31._id, Persona: p11._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-04-23T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "350",  
+	Asiste: true, Fecha_Cita: new Date("2021-05-13T10:00:00Z"), Centro_Vacunacion : cv1._id, Vacunacion: vacunacion12._id, Telefono: t35._id, Persona: p12._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-04-23T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "450",  
+	Asiste: true, Fecha_Cita: new Date("2021-05-23T10:00:00Z"), Centro_Vacunacion : cv3._id, Vacunacion: vacunacion13._id, Telefono: t38._id, Persona: p13._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-04-24T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "550",  
+	Asiste: true, Fecha_Cita: new Date("2021-05-30T10:00:00Z"), Centro_Vacunacion : cv2._id, Vacunacion: vacunacion14._id, Telefono: t41._id, Persona: p14._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-05-10T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "650",  
+	Asiste: true, Fecha_Cita: new Date("2021-06-23T10:00:00Z"), Centro_Vacunacion : cv1._id, Vacunacion: vacunacion15._id, Telefono: t44._id, Persona: p15._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-05-11T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "750",  
+	Asiste: true, Fecha_Cita: new Date("2021-06-21T10:00:00Z"), Centro_Vacunacion : cv3._id, Vacunacion: vacunacion16._id, Telefono: t46._id, Persona: p16._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-05-12T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "850",  
+	Asiste: true, Fecha_Cita: new Date("2021-06-01T10:00:00Z"), Centro_Vacunacion : cv2._id, Vacunacion: vacunacion17._id, Telefono: t50._id, Persona: p17._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-05-15T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "950",  
+	Asiste: true, Fecha_Cita: new Date("2021-06-18T10:00:00Z"), Centro_Vacunacion : cv1._id, Vacunacion: vacunacion18._id, Telefono: t53._id, Persona: p18._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-05-18T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "440",  
+	Asiste: true, Fecha_Cita: new Date("2021-06-20T10:00:00Z"), Centro_Vacunacion : cv3._id, Vacunacion: vacunacion19._id, Telefono: t56._id, Persona: p19._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-05-19T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "660",  
+	Asiste: true, Fecha_Cita: new Date("2021-06-23T10:00:00Z"), Centro_Vacunacion : cv2._id, Vacunacion: vacunacion20._id, Telefono: t58._id, Persona: p20._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-05-21T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "220",  
+	Asiste: true, Fecha_Cita: new Date("2021-06-21T10:00:00Z"), Centro_Vacunacion : cv1._id, Vacunacion: vacunacion21._id, Telefono: t58._id, Persona: p23._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-04-03T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "250",  
+	Asiste: false, Fecha_Cita: new Date("2021-08-06T10:00:00Z"), Centro_Vacunacion : cv2._id, Telefono: t1._id, Persona: p21._id});
+	
+db.agendar.insertOne({Hora_Llamada: new Date("2021-04-02T12:15:00Z"), Duracion: 130, Acepta_Terminos: true, Codigo: "150",  
+	Asiste: false, Fecha_Cita: new Date("2021-12-31T10:00:00Z"), Centro_Vacunacion : cv3._id, Telefono: t25._id, Persona: p22._id});
+
+var ag1 = db.agendar.findOne({Codigo: "779"});
+var ag2 = db.agendar.findOne({Codigo: "780"});
+var ag3 = db.agendar.findOne({Codigo: "123"});
+var ag4 = db.agendar.findOne({Codigo: "800"});
+var ag5 = db.agendar.findOne({Codigo: "801"});
+var ag6 = db.agendar.findOne({Codigo: "100"});
+var ag7 = db.agendar.findOne({Codigo: "200"});
+var ag8 = db.agendar.findOne({Codigo: "300"});
+var ag9 = db.agendar.findOne({Codigo: "400"});
+var ag10 = db.agendar.findOne({Codigo: "500"});
+var ag11 = db.agendar.findOne({Codigo: "600"});
+var ag12 = db.agendar.findOne({Codigo: "700"});
+var ag13 = db.agendar.findOne({Codigo: "900"});
+var ag14 = db.agendar.findOne({Codigo: "350"});
+var ag15 = db.agendar.findOne({Codigo: "450"});
+var ag16 = db.agendar.findOne({Codigo: "550"});
+var ag17 = db.agendar.findOne({Codigo: "650"});
+var ag18 = db.agendar.findOne({Codigo: "750"});
+var ag19 = db.agendar.findOne({Codigo: "850"});
+var ag20 = db.agendar.findOne({Codigo: "950"});
+var ag21 = db.agendar.findOne({Codigo: "440"});
+var ag22 = db.agendar.findOne({Codigo: "660"});
+var ag23 = db.agendar.findOne({Codigo: "220"});
+var ag24 = db.agendar.findOne({Codigo: "250"});
+var ag25 = db.agendar.findOne({Codigo: "150"});
+
+//Asignar Agendas a TelÃ©fono
+db.telefono.update({_id: t1._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag1._id}, {Id_Agenda: ag24._id}]}}});
+db.telefono.update({_id: t2._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag2._id}]}}});
+db.telefono.update({_id: t5._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag3._id}]}}});
+db.telefono.update({_id: t9._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag4._id}]}}});
+db.telefono.update({_id: t8._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag5._id}]}}});
+db.telefono.update({_id: t11._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag6._id}]}}});
+db.telefono.update({_id: t15._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag7._id}]}}});
+db.telefono.update({_id: t17._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag8._id}]}}});
+db.telefono.update({_id: t20._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag9._id}]}}});
+db.telefono.update({_id: t23._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag10._id}]}}});
+db.telefono.update({_id: t26._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag11._id}]}}});
+db.telefono.update({_id: t29._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag12._id}]}}});
+db.telefono.update({_id: t31._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag13._id}]}}});
+db.telefono.update({_id: t35._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag14._id}]}}});
+db.telefono.update({_id: t38._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag15._id}]}}});
+db.telefono.update({_id: t41._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag16._id}]}}});
+db.telefono.update({_id: t44._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag17._id}]}}});
+db.telefono.update({_id: t46._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag18._id}]}}});
+db.telefono.update({_id: t50._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag19._id}]}}});
+db.telefono.update({_id: t53._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag20._id}]}}});
+db.telefono.update({_id: t56._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag21._id}]}}});
+db.telefono.update({_id: t58._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag22._id}, {Id_Agenda: ag23._id}]}}});
+db.telefono.update({_id: t25._id}, {$push:{Agendar: {$each: [{Id_Agenda: ag25._id}]}}});
+
+//Asignar Agendas a Centro de VacunaciÃ³n
+db.centroVacunacion.update({_id: cv1._id}, {$push:{Agendas: {$each: [{Id_Agenda: ag1._id},{Id_Agenda: ag5._id},{Id_Agenda: ag8._id},{Id_Agenda: ag11._id},{Id_Agenda: ag14._id},{Id_Agenda: ag17._id},{Id_Agenda: ag20._id},{Id_Agenda: ag23._id}]}}});
+db.centroVacunacion.update({_id: cv2._id}, {$push:{Agendas: {$each: [{Id_Agenda: ag2._id},{Id_Agenda: ag7._id},{Id_Agenda: ag10._id},{Id_Agenda: ag13._id},{Id_Agenda: ag16._id},{Id_Agenda: ag19._id},{Id_Agenda: ag22._id},{Id_Agenda: ag24._id}]}}});
+db.centroVacunacion.update({_id: cv3._id}, {$push:{Agendas: {$each: [{Id_Agenda: ag3._id},{Id_Agenda: ag4._id},{Id_Agenda: ag6._id},{Id_Agenda: ag9._id},{Id_Agenda: ag12._id},{Id_Agenda: ag15._id},{Id_Agenda: ag18._id},{Id_Agenda: ag21._id},{Id_Agenda: ag25._id}]}}});
+
+//Asignar Agenda a VacunaciÃ³n
+db.vacunacion.update({_id: vacunacion1._id}, {$set:{Agenda: ag2._id}});
+db.vacunacion.update({_id: vacunacion2._id}, {$set:{Agenda: ag3._id}});
+db.vacunacion.update({_id: vacunacion3._id}, {$set:{Agenda: ag5._id}});
+db.vacunacion.update({_id: vacunacion4._id}, {$set:{Agenda: ag6._id}});
+db.vacunacion.update({_id: vacunacion5._id}, {$set:{Agenda: ag7._id}});
+db.vacunacion.update({_id: vacunacion6._id}, {$set:{Agenda: ag8._id}});
+db.vacunacion.update({_id: vacunacion7._id}, {$set:{Agenda: ag9._id}});
+db.vacunacion.update({_id: vacunacion8._id}, {$set:{Agenda: ag10._id}});
+db.vacunacion.update({_id: vacunacion9._id}, {$set:{Agenda: ag11._id}});
+db.vacunacion.update({_id: vacunacion10._id}, {$set:{Agenda: ag12._id}});
+db.vacunacion.update({_id: vacunacion11._id}, {$set:{Agenda: ag13._id}});
+db.vacunacion.update({_id: vacunacion12._id}, {$set:{Agenda: ag14._id}});
+db.vacunacion.update({_id: vacunacion13._id}, {$set:{Agenda: ag15._id}});
+db.vacunacion.update({_id: vacunacion14._id}, {$set:{Agenda: ag16._id}});
+db.vacunacion.update({_id: vacunacion15._id}, {$set:{Agenda: ag17._id}});
+db.vacunacion.update({_id: vacunacion16._id}, {$set:{Agenda: ag18._id}});
+db.vacunacion.update({_id: vacunacion17._id}, {$set:{Agenda: ag19._id}});
+db.vacunacion.update({_id: vacunacion18._id}, {$set:{Agenda: ag20._id}});
+db.vacunacion.update({_id: vacunacion19._id}, {$set:{Agenda: ag21._id}});
+db.vacunacion.update({_id: vacunacion20._id}, {$set:{Agenda: ag22._id}});
+db.vacunacion.update({_id: vacunacion21._id}, {$set:{Agenda: ag23._id}});
+
+
+//-----CONSULTASSSSSSS
+//--1.
+db.vacunacion.aggregate([
+    {
+     $lookup:
+       {
+         from: "vacuna",
+         localField: "Vacuna",
+         foreignField: "_id",
+         as: "vacunacionXvacuna"
+       }
+	},
+	{
+		$group: 
+		{ _id: {Vacuna: "$vacunacionXvacuna.Nombre_Vacuna"}, 
+		Cantidad: {$sum: 1}}
+	}
+]);
+
+//--2.
+db.agendar.aggregate([
+	{
+		$lookup:
+		{
+			from: "vacunacion",
+			localField: "Vacunacion",
+			foreignField: "_id",
+			as: "agendarXvacunacion"
+		}
+	},
+	{
+		$lookup:
+		{
+			from: "vacuna",
+			localField: "agendarXvacunacion.Vacuna",
+			foreignField: "_id",
+			as: "agendarXvacunacionXvacuna"
+		}
+	},
+	{ 
+		$unwind: "$agendarXvacunacionXvacuna"
+	},
+	{
+		$lookup:
+		{
+			from: "persona",
+			localField: "Persona",
+			foreignField: "_id",
+			as: "agendarXpersona"
+		}
+	},
+	{
+		$unwind: "$agendarXpersona"
+	},
+	{
+		$project:
+		{
+			_id: 0,
+			Nombre: "$agendarXpersona.Nombre",
+			Fecha_Cita: {$dateToString: { format: "%Y-%m-%d", date: "$Fecha_Cita"}},
+			Edad: {
+				$toInt:
+				{
+					$divide: [{$subtract: [ new Date(), "$agendarXpersona.Fecha_Nacimiento" ] }, (365 * 24*60*60*1000)]
+				}
+			},
+			Nombre_Vacuna: "$agendarXvacunacionXvacuna.Nombre_Vacuna"
+		}
+	}
+]).pretty();
+
+//--3.
+db.persona.aggregate([
+  {
+    $lookup:
+    {
+      from: "agendar",
+      localField: "_id",
+      foreignField: "Persona",
+      as: "personaXagendar"
+    }
+  },
+  {
+    $unwind: {path: "$personaXagendar", preserveNullAndEmptyArrays: true}
+  },
+  {
+    $match: {$or: [{"personaXagendar.Fecha_Cita": {$gte: new Date()}},{"personaXagendar.Fecha_Cita": null}]}
+  },
+  {
+    $project:
+    {
+      _id: 0,
+      Nombre: 1,
+      Edad: {
+        $toInt:
+        {
+          $divide: [{$subtract: [ new Date(), "$Fecha_Nacimiento" ] }, (365 * 24*60*60*1000)]
+        }
+      },
+      Llamado: {
+        $cond: [{$gt:["$personaXagendar.Asiste",null]},"Si","No"]
+      }
+    }
+  },
+  {
+	  $group:{_id:{Nombre: '$Nombre', Edad: '$Edad', Llamado: '$Llamado'}}
+  }
+]);
+
+//--4.
+db.agendar.aggregate([
+	{
+		$lookup:
+		{
+			from: "centroVacunacion",
+			localField: "Centro_Vacunacion",
+			foreignField: "_id",
+			as: "agendarXcentro_vacunacion"
+		}
+	},
+	{
+		$match: {Asiste: true}
+	}, 
+	{
+		$group: 
+		{ _id: {centroVacunacion: "$agendarXcentro_vacunacion.Nombre_Centro"}, 
+		total: {$sum: 1},
+		Primera_Fecha: {$min: {$dateToString: { format: "%Y-%m-%d - %H:%M", date: "$Fecha_Cita"}}},
+		Ultima_Fecha: {$max: {$dateToString: { format: "%Y-%m-%d - %H:%M", date: "$Fecha_Cita"}}}
+		}
+	}
+]).pretty();
